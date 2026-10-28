@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: pokeflip
+    runtime: node
+    plan: free
+    buildCommand: "echo ok"
+    startCommand: "node server.mjs"
