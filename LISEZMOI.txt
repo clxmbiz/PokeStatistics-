@@ -1,0 +1,6 @@
+PokéFlip - lancement (Node 18+ requis)
+1. Dans ce dossier :  node server.mjs
+2. Ouvre http://localhost:3000
+Le serveur lit Vinted en continu (1 requête/seconde, réglable : INTERVAL_MS=1500 node server.mjs)
+et le site relit le serveur chaque seconde. Les cartes suivies sont dans watchlist.json.
+Pour un accès depuis le téléphone ou 24h/24 : héberge ce dossier sur un serveur Node (Render, Railway, VPS...).

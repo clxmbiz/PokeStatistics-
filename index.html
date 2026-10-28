@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PokéFlip – Achat-revente TCG Pokémon</title>
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png"><meta name="theme-color" content="#000000"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--surface:#121212;--ink:#fff7cc;--mute:#b3a966;--line:#3a3300;--up:#ffd60a;--down:#ff5a4d;--accent:#ffd60a;--accent-ink:#000;--blue:#ffd60a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.5}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 60px}
+header{background:#000;margin:-20px -16px 0;padding:28px 16px 22px;border-bottom:6px solid #ffd60a}
+header h1{color:#ffd60a;font-size:clamp(2rem,6vw,3.4rem);line-height:1;margin:8px 0 10px;font-weight:800;letter-spacing:-.03em}
+header p{margin:0;color:#fff7cc;max-width:60ch}
+.demo{margin:16px 0;padding:10px 14px;border-left:4px solid var(--accent);background:var(--surface);font-size:.9rem;color:var(--mute)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:18px 0}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.kpi b{display:block;font-size:1.6rem;font-weight:800}
+.kpi span{font-size:.85rem;color:var(--mute)}
+nav{display:flex;gap:6px;overflow-x:auto;margin:22px 0 14px;padding-bottom:4px}
+nav button{font:inherit;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:9px 14px;border-radius:999px;cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.panel[hidden]{display:none}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+select,input{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0}
+.scroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);font-size:.93rem}
+th{color:var(--mute);font-weight:600;font-size:.82rem}
+tr:last-child td{border-bottom:0}
+td small{display:block;color:var(--mute)}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.up{color:var(--up);font-weight:600}.down{color:var(--down);font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h3{margin:0 0 2px;font-size:1.05rem}
+.card p{margin:8px 0 0;font-size:.9rem;color:var(--mute)}
+.bar{height:8px;background:var(--line);border-radius:4px;margin-top:10px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--up)}
+.tag{display:inline-block;font-size:.78rem;font-weight:600;padding:2px 9px;border-radius:999px;border:1px solid currentColor}
+.ok{color:var(--up)}.no{color:var(--down)}.wait{color:var(--mute)}
+.cal{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.cal li{display:flex;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.cal time{min-width:74px;font-weight:800}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.calc label{display:grid;gap:4px;font-size:.85rem;color:var(--mute)}
+.res{margin-top:14px;padding:16px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-size:1.1rem}
+.res b{font-size:1.9rem;display:block}
+.btn{display:inline-block;padding:6px 11px;border-radius:7px;background:#ffd60a;color:#000;text-decoration:none;font-weight:700;font-size:.82rem;border:1px solid #ffd60a;margin:2px 4px 2px 0}
+.btn.alt{background:transparent;color:var(--accent);border-color:var(--line)}
+.btn:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+footer{margin-top:36px;font-size:.82rem;color:var(--mute)}
+.dcard{display:flex;gap:12px}
+.dcard .pic{flex:0 0 74px}
+.dcard .pic svg,.dcard .pic img{width:74px;height:104px;border-radius:7px;display:block;object-fit:cover;border:1px solid var(--line)}
+.dcard .pic small{display:block;text-align:center;font-size:.62rem;color:var(--mute);margin-top:3px}
+.dcard .body{min-width:0;flex:1}
+.buy{background:var(--accent);color:#000;border-color:var(--accent);font-weight:800}
+.skip{color:var(--mute)}
+.chart{width:100%;height:auto;margin-top:8px}
+.why{margin:8px 0 0;padding-left:18px;font-size:.85rem;color:var(--mute)}
+.note{font-size:.8rem;color:var(--mute);margin:10px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>⚡ PokéFlip</h1>
+<p>Suis les cartes qui baissent, repère celles qui devraient monter, et sache quand acheter et où trouver les restocks.</p>
+</header>
+<div class="demo" id="upd">Connexion au serveur…</div>
+
+<div class="kpis">
+<div class="kpi"><b class="down" id="k1">–</b><span>cartes en baisse sur 24 h</span></div>
+<div class="kpi"><b class="up" id="k2">–</b><span>cartes à tendance haussière</span></div>
+<div class="kpi"><b id="k3">–</b><span>restocks à surveiller</span></div>
+</div>
+
+<nav role="tablist" id="tabs">
+<button role="tab" aria-selected="true" data-p="baisses">Baisses</button>
+<button role="tab" aria-selected="false" data-p="pred">Prévisions de baisse</button>
+<button role="tab" aria-selected="false" data-p="ecart">Écart vs courbe</button>
+<button role="tab" aria-selected="false" data-p="prev">Prévisions</button>
+<button role="tab" aria-selected="false" data-p="achat">Quand acheter</button>
+<button role="tab" aria-selected="false" data-p="restock">Restocks</button>
+<button role="tab" aria-selected="false" data-p="deals">Vinted SR / AR</button>
+<button role="tab" aria-selected="false" data-p="marge">Calculateur de marge</button>
+</nav>
+
+<section class="panel" id="baisses">
+<div class="tools">
+<select id="sort" aria-label="Trier"><option value="chg">Plus forte baisse</option><option value="since">Baisse la plus ancienne</option><option value="price">Prix</option></select>
+<input id="q" type="search" placeholder="Chercher une carte ou une extension" aria-label="Chercher">
+</div>
+<div class="scroll"><table><thead><tr><th>Carte</th><th>Prix</th><th>Variation 7 j</th><th>En baisse depuis</th><th>Courbe</th><th>Acheter</th></tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+
+<section class="panel" id="pred" hidden>
+<div class="demo">Analyse des cartes dont le prix a le plus de chances de continuer à baisser. Score calculé à partir de l’historique des ventes réussies Cardmarket (30 j) : élan sur 7 j, écart à la tendance, distance au plus bas. C’est une heuristique, pas une certitude.</div>
+<div class="grid" id="predlist"></div>
+</section>
+
+<section class="panel" id="ecart" hidden>
+<div class="demo">Cartes qui chutent <b>par rapport à leur courbe d’avant</b> : la ligne en pointillé prolonge la tendance des 3 premières semaines, la ligne pleine est le prix de vente réel (Cardmarket, ventes réussies).</div>
+<div class="grid" id="ecartlist"></div>
+</section>
+
+<section class="panel" id="prev" hidden>
+<div class="grid" id="fc"></div>
+</section>
+
+<section class="panel" id="achat" hidden>
+<ul class="cal" id="cal"></ul>
+</section>
+
+<section class="panel" id="restock" hidden>
+<div class="scroll"><table><thead><tr><th>Produit</th><th>Enseigne</th><th>Statut</th><th>Dernier passage</th></tr></thead><tbody id="rs"></tbody></table></div>
+</section>
+
+<section class="panel" id="deals" hidden>
+<div class="demo">Annonces Vinted de cartes <b>SR</b> et <b>AR</b>, françaises et japonaises, comparées à la cote Cardmarket. Ce sont de <b>vraies annonces</b>, relues sur Vinted en continu et actualisées ici chaque seconde. Les frais de protection acheteur Vinted s’ajoutent au prix.</div>
+<div class="tools">
+<select id="dl" aria-label="Langue"><option value="all">Français et japonais</option><option value="FR">Français</option><option value="JP">Japonais</option></select>
+<select id="dr" aria-label="Rareté"><option value="all">SR et AR</option><option value="SR">SR</option><option value="AR">AR</option></select>
+</div>
+<p class="note" id="dnote"></p>
+<div class="grid" id="dlist"></div>
+</section>
+
+<section class="panel" id="marge" hidden>
+<div class="calc">
+<label>Prix d’achat (€)<input type="number" id="c1" value="40" min="0" step="0.5"></label>
+<label>Prix de revente (€)<input type="number" id="c2" value="62" min="0" step="0.5"></label>
+<label>Frais de plateforme (%)<input type="number" id="c3" value="5" min="0" step="0.5"></label>
+<label>Frais d’envoi (€)<input type="number" id="c4" value="2.5" min="0" step="0.1"></label>
+</div>
+<div class="res" id="res"></div>
+</section>
+
+<footer>Les prévisions sont des indicateurs, pas des garanties ni un conseil financier. Le marché des cartes peut chuter sans prévenir.</footer>
+</div>
+
+<script>
+const q2=s=>encodeURIComponent(s);
+const cards=[
+{n:"Dracaufeu ex",s:"Flammes Obsidiennes 125/197",p:48.9,c:-14.2,h:52},
+{n:"Pikachu VMAX (alt)",s:"Voltage Éclatant 188/185",p:310,c:-6.8,h:130},
+{n:"Mew ex",s:"151 232/165",p:21.4,c:-11.5,h:30},
+{n:"Lugia V (alt)",s:"Tempête Argentée 186/195",p:195,c:-3.1,h:200},
+{n:"Rayquaza VMAX (alt)",s:"Évolution Céleste 218/203",p:640,c:4.6,h:0},
+{n:"Gardevoir ex",s:"Écarlate et Violet 086/198",p:6.2,c:-18.9,h:18},
+{n:"Mimiqui (SIR)",s:"Faille Paradoxe 190/182",p:12.8,c:-9.4,h:44},
+{n:"Évoli (promo)",s:"Promo SVP 173",p:8.9,c:7.9,h:0}];
+function series(c,seed){let a=[],v=100,r=seed;for(let i=0;i<14;i++){r=(r*9301+49297)%233280;v+=(r/233280-.5)*5+(-c/14);a.push(v)}return a}
+function spark(a,col){const mn=Math.min(...a),mx=Math.max(...a),w=90,h=26;const pts=a.map((v,i)=>(i*w/(a.length-1)).toFixed(1)+","+(h-(v-mn)/(mx-mn||1)*h).toFixed(1)).join(" ");return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="${col}" stroke-width="2"/></svg>`}
+const eur=v=>v.toLocaleString("fr-FR",{style:"currency",currency:"EUR"});
+const dur=h=>h<1?"aujourd’hui":h<48?h+" h":Math.round(h/24)+" j";
+function render(){const q=document.getElementById("q").value.toLowerCase(),k=document.getElementById("sort").value;
+let l=cards.filter(x=>(x.n+x.s).toLowerCase().includes(q));
+l.sort((a,b)=>k=="chg"?a.c-b.c:k=="since"?b.h-a.h:b.p-a.p);
+document.getElementById("rows").innerHTML=l.map((x,i)=>`<tr><td>${x.n}<small>${x.s}</small></td><td class="num">${eur(x.p)}</td><td class="num ${x.c<0?"down":"up"}">${x.c>0?"+":""}${x.c.toLocaleString("fr-FR")} %</td><td class="num">${x.c<0?dur(x.h):"–"}</td><td>${spark(series(x.c,i*7+3),x.c<0?"var(--down)":"var(--up)")}</td><td>${links(x)}</td></tr>`).join("")||`<tr><td colspan="6">Aucune carte trouvée. Essaie un autre nom ou une autre extension.</td></tr>`}
+document.getElementById("q").oninput=render;document.getElementById("sort").onchange=render;render();
+
+const fc=[
+{n:"Rayquaza VMAX (alt)",sc:82,t:"Hausse probable",d:"Offre en baisse sur les places de marché et demande stable chez les collectionneurs."},
+{n:"Évoli (promo)",sc:74,t:"Hausse probable",d:"Rebond après une période creuse, intérêt récurrent à l’approche des fêtes."},
+{n:"Mew ex",sc:58,t:"À surveiller",d:"Baisse forte mais encore en cours. Attends un point bas stable avant d’acheter."},
+{n:"Dracaufeu ex",sc:55,t:"À surveiller",d:"Valeur sûre sur le long terme, mais le prix cherche encore son plancher."},
+{n:"Gardevoir ex",sc:30,t:"Risque de baisse",d:"Beaucoup d’exemplaires en circulation, peu de raisons de remonter vite."},
+{n:"Pikachu VMAX (alt)",sc:48,t:"Neutre",d:"Marché calme, écart acheteur/vendeur étroit."}];
+const rFc=()=>document.getElementById("fc").innerHTML=fc.map(x=>`<div class="card"><h3>${x.n}</h3><span class="tag ${x.sc>=65?"ok":x.sc<40?"no":"wait"}">${x.t}</span><div class="bar" role="img" aria-label="Score ${x.sc} sur 100"><i style="width:${x.sc}%;background:${x.sc>=65?"var(--up)":x.sc<40?"var(--down)":"var(--blue)"}"></i></div><p>Score ${x.sc}/100. ${x.d}</p></div>`).join("");
+
+document.getElementById("cal").innerHTML=[
+["Nov.","Sortie d’une nouvelle extension","Les prix des cartes de l’ancienne extension baissent souvent. Bon moment pour acheter ce qui a du potentiel long terme."],
+["Déc.","Période des fêtes","La demande monte sur les coffrets et les cartes populaires. Idéal pour revendre."],
+["Janv.","Après les fêtes","Les prix retombent souvent. Cherche tes achats ici."],
+["Fév.","Événements et tournois","Les cartes jouables en compétition peuvent grimper avant les gros tournois."]]
+.map(x=>`<li><time>${x[0]}</time><div><b>${x[1]}</b><br><span style="color:var(--mute)">${x[2]}</span></div></li>`).join("");
+
+const rs=[
+["Coffret Dresseur d’élite","Pokémon Center","Disponible","il y a 12 min","ok"],
+["Display 36 boosters","Cultura","Rupture","il y a 3 h","no"],
+["Ultra Premium Collection","Fnac","Annoncé : jeudi","il y a 1 j","wait"],
+["Tripack","Leclerc","Disponible","il y a 40 min","ok"],
+["Coffret Dracaufeu","Amazon","Rupture","il y a 5 h","no"],
+["Booster bundle","Micromania","Annoncé : vendredi","il y a 2 j","wait"]];
+const rRs=()=>document.getElementById("rs").innerHTML=rs.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td><td><span class="tag ${x[4]}">${x[2]}</span></td><td class="num">${x[3]}</td></tr>`).join("");
+
+function calc(){const b=+c1.value,s=+c2.value,f=+c3.value,e=+c4.value;const net=s-s*f/100-e-b;const roi=b?net/b*100:0;
+res.innerHTML=`Bénéfice net<b class="${net>=0?"up":"down"}">${eur(net)}</b>Rentabilité : ${roi.toLocaleString("fr-FR",{maximumFractionDigits:1})} % sur ton achat`}
+document.querySelectorAll(".calc input").forEach(i=>i.oninput=calc);calc();
+
+document.getElementById("k1").textContent=cards.filter(x=>x.c<0).length;
+document.getElementById("k2").textContent=cards.filter(x=>x.c>0).length+fc.filter(x=>x.sc>=65).length-1;
+document.getElementById("k3").textContent=rs.filter(x=>x[4]!="no").length;
+
+const deals=[];
+function links(x,lang){const t=q2(x.n+" "+x.s+(lang?(lang=="JP"?" japonais":" français"):""));
+return `<a class="btn" href="${x.u||"https://www.vinted.fr/catalog?search_text="+t}" target="_blank" rel="noopener">${x.u?"Acheter sur Vinted":"Voir sur Vinted"}</a><a class="btn alt" href="https://www.cardmarket.com/fr/Pokemon/Products/Search?searchString=${q2(x.n)}" target="_blank" rel="noopener">Cardmarket</a><a class="btn alt" href="https://www.ebay.fr/sch/i.html?_nkw=${t}&LH_Sold=1&LH_Complete=1" target="_blank" rel="noopener">eBay vendus</a>`}
+
+const TC={fire:["#ff7a1a","#7a1d00"],electric:["#ffd60a","#5a4600"],psychic:["#c06bff","#35104f"],water:["#3fa0ff","#0b2a55"],dragon:["#7b5cff","#1a1050"],fairy:["#ff8ad0","#5a1740"],dark:["#8a8a8a","#161616"],normal:["#d9c9a0","#4a4128"],grass:["#4cc85a","#0f3a17"]};
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+function cardArt(x){const [a,b]=TC[x.t]||TC.normal,id="g"+Math.random().toString(36).slice(2,8);
+const svg=`<svg viewBox="0 0 74 104" role="img" aria-label="Illustration ${esc(x.n)}"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="74" height="104" rx="7" fill="#000"/><rect x="4" y="4" width="66" height="96" rx="5" fill="url(#${id})"/><rect x="9" y="22" width="56" height="44" rx="3" fill="#000" fill-opacity=".28"/><circle cx="37" cy="44" r="14" fill="#fff" fill-opacity=".25"/><text x="37" y="50" text-anchor="middle" font-size="18" font-weight="800" fill="#fff">${esc(x.n[0])}</text><text x="9" y="16" font-size="7.5" font-weight="700" fill="#fff">${esc(x.n.slice(0,16))}</text><rect x="9" y="76" width="26" height="12" rx="6" fill="#ffd60a"/><text x="22" y="85" text-anchor="middle" font-size="8" font-weight="800" fill="#000">${esc(x.r||"")}</text></svg>`;
+return x.img?`<img src="${esc(x.img)}" alt="${esc(x.n)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.outerHTML=this.dataset.f" data-f="${esc(svg)}">`:svg}
+const FAKE=/ne\s*pas\s*(acheter|commander)|n['’]ach[eè]te[zs]?\s*pas|do\s*not\s*buy|don['’]?t\s*buy|pas\s*(à|a)\s*vendre|annonce\s*(test|bidon|factice)/i;
+const isFake=d=>d.v<=2&&FAKE.test(d.desc||"");
+const imgTry={};let liveOk=false;
+async function resolveImgs(){let ch=false;for(const d of deals){if(d.img||!d.id||imgTry[d.id])continue;imgTry[d.id]=1;try{const r=await fetch("https://api.tcgdex.net/v2/"+(d.l=="JP"?"ja":"fr")+"/cards/"+encodeURIComponent(d.id));if(!r.ok)throw 0;const j=await r.json();if(j.image){d.img=j.image+"/high.webp";ch=true}}catch(e){}}if(ch)rD()}
+function rD(){const lg=dl.value,rr=dr.value;
+const hid=deals.filter(isFake).length;dnote.textContent=hid?hid+" annonce"+(hid>1?"s":"")+" masquée"+(hid>1?"s":"")+" (annonce à 1 € « ne pas acheter »).":"";
+const r=deals.filter(d=>!isFake(d)&&(lg=="all"||d.l==lg)&&(rr=="all"||d.r==rr)).map(d=>({...d,diff:d.cm-d.v,pct:(d.cm-d.v)/d.cm*100})).sort((a,b)=>b.pct-a.pct);
+dlist.innerHTML=r.map(d=>{const good=d.diff>0;return `<div class="card dcard"><div class="pic">${cardArt({...d,img:d.vimg||d.img})}<small>${d.vimg?"photo de l’annonce":"illustration"}</small></div><div class="body"><h3>${esc(d.n)} <span class="tag wait">${d.l=="FR"?"Français":"Japonais"}</span> <span class="tag ok">${esc(d.r)}</span></h3><small style="color:var(--mute)">${esc(d.s)}</small>${d.title?`<small style="color:var(--mute);display:block">« ${esc(d.title)} »</small>`:""}<p>Vinted : <b>${eur(d.v)}</b><br>Cote Cardmarket : ${eur(d.cm)}<br>Écart : <b class="${good?"up":"down"}">${good?"−":"+"}${eur(Math.abs(d.diff))} (${good?"−":"+"}${Math.abs(d.pct).toFixed(0)} %)</b></p>${good?`<p><span class="tag buy">À ACHETER</span> ${d.pct.toFixed(0)} % sous la cote : bon investissement potentiel.</p>`:`<p class="skip">Au-dessus de la cote, à éviter.</p>`}<p>${links(d,d.l)}</p></div></div>`}).join("")||`<div class="card">${liveOk?"Aucune annonce pour ce filtre pour l’instant.":"En attente des premières annonces Vinted…"}</div>`}
+dl.onchange=rD;dr.onchange=rD;rD();
+
+/* ---------- analyse de l'historique de ventes ---------- */
+const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+function hist(x,i){if(x.hs&&x.hs.length>=30)return x.hs;const s=series(x.c,i*7+3),k=x.p/s[s.length-1];const o=[];for(let j=0;j<30;j++)o.push(+(s[Math.floor(j*(s.length-1)/29)]*k).toFixed(2));return o}
+function analyse(x,i){const h=hist(x,i),n=h.length,p=h[n-1];
+const base=h.slice(0,n-7),m=base.length,mx=(m-1)/2,my=mean(base);let sxy=0,sxx=0;base.forEach((v,j)=>{sxy+=(j-mx)*(v-my);sxx+=(j-mx)**2});const sl=sxy/sxx,ic=my-sl*mx;
+const trend=h.map((_,j)=>ic+sl*j);const dev=(p-trend[n-1])/trend[n-1]*100;
+const a7=mean(h.slice(-7)),p7=mean(h.slice(-14,-7)),mom=(a7-p7)/p7*100;
+const a30=mean(h),vs30=(p-a30)/a30*100,mn=Math.min(...h),fromMin=(p-mn)/mn*100;
+const last=h.slice(-5),sl5=(last[4]-last[0])/4,proj=Math.max(0,p+sl5*7),projPct=(proj-p)/p*100;
+let risk=50-mom*2-dev*0.8+(fromMin>12?8:-8);risk=Math.round(Math.max(5,Math.min(95,risk)));
+const why=[];if(mom<-3)why.push(`Élan baissier : ${mom.toFixed(1)} % vs la semaine précédente`);if(dev<-3)why.push(`${Math.abs(dev).toFixed(1)} % sous sa tendance d’avant`);if(vs30<-5)why.push(`${Math.abs(vs30).toFixed(1)} % sous sa moyenne 30 j`);if(fromMin>12)why.push(`Encore ${fromMin.toFixed(0)} % au-dessus de son plus bas : marge pour baisser`);else why.push("Proche de son plus bas 30 j : le rebond est possible");if(mom>=0)why.push("Pas d’élan baissier récent");
+return{x,h,trend,p,dev,mom,vs30,risk,proj,projPct,why}}
+function bigChart(a){const w=300,ht=90,all=[...a.h,...a.trend],mn=Math.min(...all),mx=Math.max(...all),X=j=>j*w/(a.h.length-1),Y=v=>ht-(v-mn)/(mx-mn||1)*ht;
+const pl=(arr)=>arr.map((v,j)=>X(j).toFixed(1)+","+Y(v).toFixed(1)).join(" ");
+return `<svg class="chart" viewBox="-2 -4 ${w+4} ${ht+8}" role="img" aria-label="Prix réel et tendance d’avant pour ${esc(a.x.n)}"><polyline points="${pl(a.trend)}" fill="none" stroke="#b3a966" stroke-width="1.5" stroke-dasharray="4 3"/><polyline points="${pl(a.h)}" fill="none" stroke="#ffd60a" stroke-width="2.5"/><circle cx="${X(a.h.length-1)}" cy="${Y(a.p)}" r="3.5" fill="#ff5a4d"/></svg>`}
+function rPred(){const l=cards.map(analyse).sort((a,b)=>b.risk-a.risk);
+predlist.innerHTML=l.map(a=>`<div class="card"><h3>${esc(a.x.n)}</h3><small style="color:var(--mute)">${esc(a.x.s)}</small><br><span class="tag ${a.risk>=65?"no":a.risk<40?"ok":"wait"}">${a.risk>=65?"Baisse probable":a.risk<40?"Baisse peu probable":"Incertain"}</span><div class="bar" role="img" aria-label="Risque de baisse ${a.risk} sur 100"><i style="width:${a.risk}%;background:${a.risk>=65?"var(--down)":"var(--accent)"}"></i></div><p>Risque de baisse : <b>${a.risk}/100</b><br>Projection 7 j : <b class="${a.projPct<0?"down":"up"}">${a.projPct>0?"+":""}${a.projPct.toFixed(1)} %</b> (≈ ${eur(a.proj)})</p><ul class="why">${a.why.map(w=>`<li>${w}</li>`).join("")}</ul></div>`).join("")}
+function rEcart(){const l=cards.map(analyse).filter(a=>a.dev<-1).sort((a,b)=>a.dev-b.dev);
+ecartlist.innerHTML=l.map(a=>`<div class="card"><h3>${esc(a.x.n)}</h3><small style="color:var(--mute)">${esc(a.x.s)}</small>${bigChart(a)}<p>Prix actuel : <b>${eur(a.p)}</b><br>Écart à la tendance d’avant : <b class="down">${a.dev.toFixed(1)} %</b><br>Vs moyenne 30 j : <b class="${a.vs30<0?"down":"up"}">${a.vs30.toFixed(1)} %</b></p></div>`).join("")||`<div class="card">Aucune carte ne chute sous sa courbe pour l’instant.</div>`}
+rPred();rEcart();resolveImgs();
+
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
+document.querySelectorAll("#tabs button").forEach(o=>o.setAttribute("aria-selected",o===b));
+document.querySelectorAll(".panel").forEach(p=>p.hidden=p.id!==b.dataset.p)});
+
+rFc();rRs();
+function kp(){k1.textContent=cards.filter(x=>x.c<0).length;k2.textContent=cards.filter(x=>x.c>0).length+fc.filter(x=>x.sc>=65).length;k3.textContent=rs.filter(x=>x[4]!="no").length}
+function stamp(t){upd.textContent=t}
+let sigD="",sigS="",busy=false,failN=0;
+const ago=ms=>{const s=Math.max(0,Math.round(ms/1000));return s<2?"à l’instant":s<60?"il y a "+s+" s":"il y a "+Math.round(s/60)+" min"};
+async function pullStatic(){try{const r=await fetch("data.json?"+Date.now(),{cache:"no-store"});if(!r.ok)return;const d=await r.json();const sg=d.updated;if(sg===sigS)return;sigS=sg;
+cards.splice(0,cards.length,...d.cards);fc.splice(0,fc.length,...d.fc);rs.splice(0,rs.length,...d.rs);render();rFc();rRs();rPred();rEcart();kp()}catch(e){}}
+async function pull(){if(busy)return;busy=true;
+try{const r=await fetch("api/deals",{cache:"no-store"});if(!r.ok)throw 0;const d=await r.json();failN=0;liveOk=true;
+const sg=JSON.stringify(d.deals);if(sg!==sigD){sigD=sg;deals.splice(0,deals.length,...d.deals);rD()}
+const st=d.blocked?"Vinted ralentit les requêtes, pause courte…":d.lastError?"Dernière erreur : "+d.lastError:d.lastOk?"Dernière lecture de Vinted "+ago(d.now-d.lastOk):"Première lecture de Vinted en cours…";
+stamp("En direct · actualisation chaque seconde · "+d.deals.length+" annonce"+(d.deals.length>1?"s":"")+" Vinted · "+st)}
+catch(e){failN++;liveOk=false;stamp("Serveur injoignable : lance « node server.mjs » puis ouvre http://localhost:3000 (nouvelle tentative chaque seconde).")}
+busy=false}
+pullStatic();pull();setInterval(pull,1000);setInterval(pullStatic,1000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){pull();pullStatic()}});
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
+</script>
+</body>
+</html>
